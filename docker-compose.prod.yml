@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   psn-frontend:
     image: kevlargroup/psn-rwanda-frontend:latest
@@ -18,4 +16,5 @@ services:
 
 networks:
   psn-network:
-    external: true 
+    name: psn-network
+    driver: bridge 
