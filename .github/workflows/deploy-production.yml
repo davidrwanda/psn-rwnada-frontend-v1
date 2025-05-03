@@ -40,7 +40,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          # Remove package-lock.json to force resolution of latest compatible dependencies
+          rm -f package-lock.json
+          # Install dependencies with a regular install (not ci) to allow resolution of packages
+          npm install
+          # Clean up any caniuse-lite issues
+          npx browserslist@latest --update-db
 
       - name: Build application
         run: npm run build
