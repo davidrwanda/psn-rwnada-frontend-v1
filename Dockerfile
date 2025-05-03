@@ -31,7 +31,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8032/ || exit 1
+  CMD curl -f http://203.161.62.61:8032/ || exit 1
 
 # Expose port 8032
 EXPOSE 8032
