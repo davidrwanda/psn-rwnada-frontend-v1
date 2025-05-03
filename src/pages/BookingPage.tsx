@@ -456,7 +456,7 @@ const BookingPage: React.FC = () => {
       });
       
       // Try a direct fetch request as an alternative to axios
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:4040/api/v1'}/documents/upload`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://203.161.62.61:4040/api/v1'}/documents/upload`, {
         method: 'POST',
         body: uploadFormData
       });
