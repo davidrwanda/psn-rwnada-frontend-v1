@@ -12,7 +12,7 @@ COPY . .
 
 # Set environment to production
 ENV NODE_ENV=production
-ENV REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:4040/api/v1}
+ENV REACT_APP_API_URL=${REACT_APP_API_URL:-http://203.161.62.61:8032/api/v1}
 
 # Build the app
 RUN npm run build
