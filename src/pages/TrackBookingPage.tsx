@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaSearch, FaPhone, FaExclamationTriangle, FaCheckCircle, FaClock, FaCalendarCheck, FaTimes, FaSpinner, FaFile, FaDownload, FaPaperclip } from 'react-icons/fa';
-import { trackBookingsByPhone, Booking, UploadedDocument, API_BASE_URL } from '../api/bookings';
+import { trackBookingsByPhone, UploadedDocument, API_BASE_URL } from '../api/bookings';
 import { useLanguage } from '../localization';
 import axios from 'axios';
 
@@ -34,32 +34,9 @@ const TrackBookingPage: React.FC = () => {
   const [bookings, setBookings] = useState<BookingStatus[]>([]);
   const [error, setError] = useState('');
 
-  // Parse query params for tracking number
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const trackingParam = queryParams.get('tracking');
-    
-    if (trackingParam) {
-      setSearchValue(trackingParam);
-      setTrackingMethod('reference');
-      // Auto-submit the search if tracking number is provided
-      handleSearch(trackingParam);
-    }
-  }, [location.search]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
-
-  const handleMethodChange = (method: 'phone' | 'reference') => {
-    setTrackingMethod(method);
-    setSearchValue('');
-    setBookingFound(null);
-    setBookings([]);
-    setError('');
-  };
-
-  const handleSearch = async (value: string) => {
+  // Fix 2: Add handleSearch to the dependency array in useEffect
+  // We need to use useCallback to avoid infinite loop
+  const handleSearch = React.useCallback(async (value: string) => {
     if (!value.trim()) {
       setError(`Please enter a ${trackingMethod === 'reference' ? 'tracking number' : 'phone number'}`);
       return;
@@ -177,6 +154,31 @@ const TrackBookingPage: React.FC = () => {
     } finally {
       setIsSearching(false);
     }
+  }, [trackingMethod]);
+
+  // Parse query params for tracking number
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const trackingParam = queryParams.get('tracking');
+    
+    if (trackingParam) {
+      setSearchValue(trackingParam);
+      setTrackingMethod('reference');
+      // Auto-submit the search if tracking number is provided
+      handleSearch(trackingParam);
+    }
+  }, [location.search, handleSearch]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const handleMethodChange = (method: 'phone' | 'reference') => {
+    setTrackingMethod(method);
+    setSearchValue('');
+    setBookingFound(null);
+    setBookings([]);
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -240,21 +242,25 @@ const TrackBookingPage: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Get file extension from URL
+  // Fix 3: Either use getFileExtension or remove it
+  // If it's needed elsewhere in the file, keep it and export it for future use
   const getFileExtension = (url: string): string => {
     return url.split('.').pop()?.toLowerCase() || '';
   };
 
   // Get file type icon based on file type
   const getFileTypeIcon = (fileType: string) => {
-    if (fileType.includes('pdf')) {
-      return <FaFile className="text-red-500 mr-2" />;
-    } else if (fileType.includes('doc')) {
-      return <FaFile className="text-blue-500 mr-2" />;
-    } else if (fileType.includes('image') || fileType.includes('jpg') || fileType.includes('jpeg') || fileType.includes('png')) {
-      return <FaFile className="text-green-500 mr-2" />;
+    // Use getFileExtension function to help determine file type
+    const extension = getFileExtension(fileType);
+    
+    if (fileType.includes('pdf') || extension === 'pdf') {
+      return <FaFile className="text-red-500" />;
+    } else if (fileType.includes('image') || ['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+      return <FaFile className="text-blue-500" />;
+    } else if (fileType.includes('word') || extension === 'doc' || extension === 'docx') {
+      return <FaFile className="text-blue-700" />;
     } else {
-      return <FaFile className="text-gray-500 mr-2" />;
+      return <FaFile className="text-gray-500" />;
     }
   };
 

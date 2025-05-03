@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaCheck, FaUser, FaPhone, FaEnvelope, FaClipboardList, FaCommentAlt, FaSpinner, FaInfoCircle, FaFileUpload, FaFile, FaTimesCircle, FaPaperclip, FaTrash, FaUpload, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { getAllServices, Service, getServiceById } from '../api/services';
@@ -56,25 +56,8 @@ const BookingPage: React.FC = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
 
-  // Parse query params to get pre-selected service
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const serviceId = queryParams.get('service');
-    
-    if (serviceId) {
-      const id = parseInt(serviceId, 10);
-      setFormData(prev => ({
-        ...prev,
-        serviceId: id
-      }));
-      
-      // Fetch the specific service details
-      fetchServiceDetails(id);
-    }
-  }, [location.search]);
-
-  // Fetch service details
-  const fetchServiceDetails = async (id: number) => {
+  // Define fetchServiceDetails with useCallback before the useEffect that uses it
+  const fetchServiceDetails = useCallback(async (id: number) => {
     if (id <= 0) {
       setSelectedService(null);
       return;
@@ -113,7 +96,24 @@ const BookingPage: React.FC = () => {
     } finally {
       setLoadingSelectedService(false);
     }
-  };
+  }, [services]);
+
+  // Parse query params to get pre-selected service
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const serviceId = queryParams.get('service');
+    
+    if (serviceId) {
+      const id = parseInt(serviceId, 10);
+      setFormData(prev => ({
+        ...prev,
+        serviceId: id
+      }));
+      
+      // Fetch the specific service details
+      fetchServiceDetails(id);
+    }
+  }, [location.search, fetchServiceDetails]);
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
@@ -294,7 +294,7 @@ const BookingPage: React.FC = () => {
     };
 
     fetchServices();
-  }, []);
+  }, [formData.serviceId]);
 
   // Function to validate phone number
   const validatePhoneNumber = (phoneNumber: string): boolean => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaUserTie, FaAward, FaHistory, FaChartLine } from 'react-icons/fa';
+import { FaUserTie, FaChartLine } from 'react-icons/fa';
 import { useLanguage } from '../localization';
 
 // Import an image for the company section

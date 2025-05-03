@@ -42,7 +42,10 @@ export const getServiceById = async (id: number): Promise<Service | null> => {
   }
 };
 
-export default {
+// Create a named object for export
+const serviceApi = {
   getAllServices,
   getServiceById,
-}; 
+};
+
+export default serviceApi; 

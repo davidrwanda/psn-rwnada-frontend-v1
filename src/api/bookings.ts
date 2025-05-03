@@ -247,8 +247,11 @@ export const trackBookingsByPhone = async (phoneNumber: string): Promise<Booking
   }
 };
 
-export default {
-  uploadDocuments,
+// Create a named object for export
+const bookingApi = {
   createPublicBooking,
   trackBookingsByPhone,
-}; 
+  uploadDocuments
+};
+
+export default bookingApi; 
