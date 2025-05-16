@@ -12,7 +12,7 @@ COPY . .
 
 # Set environment to production
 ENV NODE_ENV=production
-ENV REACT_APP_API_URL=${REACT_APP_API_URL:-http://203.161.62.61:8032/api/v1}
+ENV REACT_APP_API_URL=${REACT_APP_API_URL:-https://backend.psnrwanda.com/api/v1}
 
 # Build the app
 RUN npm run build
@@ -31,7 +31,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://203.161.62.61:8032/ || exit 1
+  CMD curl -f https://backend.psnrwanda.com/ || exit 1
 
 # Expose port 8032
 EXPOSE 8032
