@@ -107,7 +107,7 @@ export const createPublicBooking = async (bookingData: BookingFormData): Promise
       });
       
       // Send request with FormData
-      const response = await axios.post(`${API_BASE_URL}/bookings/public`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/bookings/public/with-documents`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
