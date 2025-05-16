@@ -51,7 +51,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          REACT_APP_API_URL: http://203.161.62.61:4040/api/v1
+          REACT_APP_API_URL: https://backend.psnrwanda.com/api/v1
 
       - name: Log into Docker Hub
         uses: docker/login-action@v3
@@ -85,6 +85,6 @@ jobs:
           script: |
             cd /opt/psn_rwanda/frontend
             git pull origin main
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml up -d --force-recreate
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --force-recreate
             docker image prune -f 
